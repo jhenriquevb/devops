@@ -107,10 +107,24 @@ resource "aws_instance" "app" {
 
   user_data = <<-EOF
     #!/bin/bash
+    set -e
+
+    # Atualizar sistema
     yum update -y
-    yum install -y python3 python3-pip git
-    pip3 install flask
-    echo "Instância pronta para deploy da aplicação Flask."
+
+    # Instalar Docker
+    yum install -y docker
+    systemctl start docker
+    systemctl enable docker
+    usermod -aG docker ec2-user
+
+    # Instalar Docker Compose (plugin)
+    mkdir -p /usr/local/lib/docker/cli-plugins
+    curl -SL https://github.com/docker/compose/releases/latest/download/docker-compose-linux-x86_64 \
+      -o /usr/local/lib/docker/cli-plugins/docker-compose
+    chmod +x /usr/local/lib/docker/cli-plugins/docker-compose
+
+    echo "Instância pronta com Docker para deploy via container."
   EOF
 
   tags = {

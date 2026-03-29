@@ -15,5 +15,8 @@ __pycache__/
 venv/
 .env
 
+# Docker
+docker-compose.override.yml
+
 # OS
 .DS_Store
